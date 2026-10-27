@@ -1,0 +1,11 @@
+# ICM learning workspace (local only, not part of the dsa library)
+/CLAUDE.md
+/CONTEXT.md
+/icm/
+/reference/
+/progress/
+/work/
+/.claude/
+
+# Build output
+/build/
