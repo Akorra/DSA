@@ -53,6 +53,10 @@ Then include only the modules you need:
 #include <dsa/algorithm/sort.hpp>
 ```
 
+Linking `dsa::dsa` adds only the include path and C++20. dsa's own warning,
+`-Werror` and sanitizer settings apply to its tests and benchmarks, never to
+your targets.
+
 Everything lives in `namespace dsa`; implementation details live in
 `namespace dsa::detail` and `include/dsa/detail/`, and are not part of the
 public interface.
@@ -68,14 +72,38 @@ installed.
 | `debug`       | Day-to-day work. ASan + UBSan, warnings as errors.       |
 | `debug-clang` | Same, with Clang. Run both compilers regularly.          |
 | `debug-nosan` | Plain debug, for valgrind or toolchains without ASan.    |
-| `release`     | Tests with optimizations; catches UB that only shows at -O2. |
-| `bench`       | Benchmarks only, RelWithDebInfo so profilers have symbols. |
+| `release`     | Tests at `-O3 -DNDEBUG`; catches UB that only shows once the optimizer runs. |
+| `bench`       | Benchmarks only, RelWithDebInfo plus frame pointers so profilers have symbols and stacks. |
+
+Each preset builds into `build/<preset>/`.
 
 ```sh
 cmake --preset debug
 cmake --build --preset debug
 ctest --preset debug
+
+cmake --workflow --preset debug   # the same three steps in one command
 ```
+
+`debug`, `debug-clang` and `release` have workflow presets. `ctest` fails if
+no tests are registered, so a broken test setup can't pass silently.
+
+### Build options
+
+Set by the presets; override with `-D` when configuring. They only exist when
+dsa is the top-level project.
+
+| Option                   | Default | Effect                                              |
+|--------------------------|---------|-----------------------------------------------------|
+| `DSA_SANITIZERS`         | empty   | `;`-separated list, e.g. `address;undefined`. Added to compile and link, with `-fno-sanitize-recover=all` and `-fno-omit-frame-pointer`. GCC/Clang only. |
+| `DSA_WARNINGS_AS_ERRORS` | `ON`    | `-Werror` (`/WX` on MSVC) on dsa's own targets.     |
+
+Warning flags are in `cmake/Warnings.cmake` (target `dsa_warnings`) and
+sanitizer flags in `cmake/Sanitizers.cmake` (target `dsa_sanitizers`). dsa's
+own targets link both `PRIVATE`. GNU extensions are off (`-std=c++20`).
+
+[`cmake/README.md`](cmake/README.md) explains every flag, sanitizer and preset
+in detail: what each catches, runtime options, valgrind, pitfalls.
 
 ### VS Code
 
@@ -150,8 +178,12 @@ cmake/                    warning and sanitizer settings
   signatures for std-faithful types (`push_back`, `emplace`, `size_type`, ...).
 - One public header per module. Each includes `<dsa/config.hpp>` and
   everything else it uses, and nothing it doesn't.
-- `DSA_ASSERT(cond, "message")` for preconditions and invariants; enabled in
-  debug builds.
+- `DSA_ASSERT(cond, "message")` for preconditions and invariants. On by
+  default, off when `NDEBUG` is defined; `-DDSA_ENABLE_ASSERTS=1` forces it on
+  (e.g. hardened release builds), `=0` forces it off. When off, `cond` is
+  still type-checked but never evaluated, so it must have no side effects.
+  Wrap a condition containing a top-level comma in extra parentheses:
+  `DSA_ASSERT((std::is_same_v<T, U>), "...")`.
 - Variants that drop std guarantees say so in a comment at the top of the
   header and in their design note.
 
@@ -176,9 +208,9 @@ structures std doesn't provide.
 
 | Work item | Header | Implemented |
 |-----------|--------|-------------|
-| Build system, presets, CI, VS Code setup | | ✅ |
-| Test harness: Catch2, `tracked` element type, header self-containment check | `tests/support/tracked.hpp` | ✅ |
-| Benchmark harness and std baseline | `benchmarks/` | ✅ |
+| Build system, presets, CI, VS Code setup | `CMakeLists.txt`, `CMakePresets.json`, `cmake/` | 🚧 |
+| Test harness: Catch2, `tracked` element type, header self-containment check | `tests/support/tracked.hpp` | ⬜ |
+| Benchmark harness and std baseline | `benchmarks/` | ⬜ |
 | Config and assertion macros | `dsa/config.hpp`, `dsa/detail/assert.hpp` | ✅ |
 | Differential-testing helper (random ops vs. std) | `tests/support/differential.hpp` | ⬜ |
 | Uninitialized-memory algorithms (`uninitialized_copy`, `_move`, `destroy`, ...) with exception safety **(std)** | `dsa/memory/uninitialized.hpp` | ⬜ |
