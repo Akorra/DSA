@@ -59,7 +59,8 @@
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_CXX_FLAGS": "-fno-omit-frame-pointer",
-        "DSA_BUILD_TESTS": "OFF"
+        "DSA_BUILD_TESTS": "OFF",
+        "DSA_BUILD_BENCHMARKS": "ON"
       }
     }
   ],

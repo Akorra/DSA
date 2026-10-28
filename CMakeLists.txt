@@ -39,4 +39,10 @@ if(PROJECT_IS_TOP_LEVEL)
         enable_testing()
         add_subdirectory(tests)
     endif()
+
+    # Off by default: needs an optimised build to mean anything (bench preset).
+    option(DSA_BUILD_BENCHMARKS "Build dsa's benchmarks" OFF)
+    if(DSA_BUILD_BENCHMARKS)
+        add_subdirectory(benchmarks)
+    endif()
 endif()

@@ -98,6 +98,7 @@ dsa is the top-level project.
 | `DSA_SANITIZERS`         | empty   | `;`-separated list, e.g. `address;undefined`. Added to compile and link, with `-fno-sanitize-recover=all` and `-fno-omit-frame-pointer`. GCC/Clang only. |
 | `DSA_WARNINGS_AS_ERRORS` | `ON`    | `-Werror` (`/WX` on MSVC) on dsa's own targets.     |
 | `DSA_BUILD_TESTS`        | `ON`    | Build `tests/` (`OFF` in `bench`).                  |
+| `DSA_BUILD_BENCHMARKS`   | `OFF`   | Build `benchmarks/` (`ON` in `bench`).              |
 
 Warning flags are in `cmake/Warnings.cmake` (target `dsa_warnings`) and
 sanitizer flags in `cmake/Sanitizers.cmake` (target `dsa_sanitizers`). dsa's
@@ -154,6 +155,11 @@ cmake --preset bench && cmake --build --preset bench
 ./build/bench/benchmarks/bench_baseline --benchmark_repetitions=5 \
     --benchmark_report_aggregates_only=true
 ```
+
+On a laptop or desktop, the CPU governor makes timings noisy (Google
+Benchmark warns "CPU scaling is enabled"). For results you want to compare,
+switch to the performance governor first:
+`sudo cpupower frequency-set -g performance` (back with `-g powersave`).
 
 Guidelines: vary element size (4 B, 64 B, 256 B+) and element count (fits in
 L1, L2, LLC, RAM); test hot and cold caches; include realistic access patterns

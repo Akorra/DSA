@@ -64,7 +64,10 @@ Why each one exists:
   pointers so `perf` can show symbols and full call stacks. `NDEBUG` is set,
   so asserts don't distort timings.
 
-`bench` sets `DSA_BUILD_TESTS=OFF`: it builds benchmarks only.
+`bench` sets `DSA_BUILD_TESTS=OFF` and `DSA_BUILD_BENCHMARKS=ON`: it builds
+benchmarks only. Benchmarks link `dsa_warnings` but never `dsa_sanitizers`,
+which would distort every timing. Google Benchmark is found or fetched like
+Catch2 (pinned v1.10.0), with its own tests, install rules and `-Werror` off.
 
 The test presets set `noTestsAction: error`: if no tests are registered,
 `ctest` fails instead of reporting success.
@@ -83,6 +86,8 @@ The test presets set `noTestsAction: error`: if no tests are registered,
 | Option                   | Default | Effect |
 |--------------------------|---------|--------|
 | `DSA_SANITIZERS`         | empty   | `;`-separated, e.g. `address;undefined`. Becomes `-fsanitize=address,undefined` on compile and link, plus `-fno-sanitize-recover=all -fno-omit-frame-pointer`. GCC/Clang only. |
+| `DSA_BUILD_TESTS`        | `ON`    | Build `tests/` (Catch2 tests, death tests, self-containment check). |
+| `DSA_BUILD_BENCHMARKS`   | `OFF`   | Build `benchmarks/` (Google Benchmark). |
 | `DSA_WARNINGS_AS_ERRORS` | `ON`    | Adds `-Werror` (`/WX` on MSVC). Turn off to see all warnings at once instead of stopping at the first. |
 | `DSA_ENABLE_ASSERTS`     | (unset) | A preprocessor macro, not a CMake option: pass `-DCMAKE_CXX_FLAGS=-DDSA_ENABLE_ASSERTS=1`. Unset means on unless `NDEBUG`. |
 
