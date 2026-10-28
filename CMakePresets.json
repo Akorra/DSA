@@ -1,0 +1,118 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug (GCC, ASan + UBSan)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "g++",
+        "DSA_SANITIZERS": "address;undefined"
+      }
+    },
+    {
+      "name": "debug-clang",
+      "displayName": "Debug (Clang, ASan + UBSan)",
+      "inherits": "debug",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "debug-nosan",
+      "displayName": "Debug (GCC, no sanitizers: valgrind)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release (GCC, optimised tests)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "bench",
+      "displayName": "Bench (GCC, RelWithDebInfo)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "-fno-omit-frame-pointer"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug",       "configurePreset": "debug" },
+    { "name": "debug-clang", "configurePreset": "debug-clang" },
+    { "name": "debug-nosan", "configurePreset": "debug-nosan" },
+    { "name": "release",     "configurePreset": "release" },
+    { "name": "bench",       "configurePreset": "bench" }
+  ],
+  "testPresets": [
+    {
+      "name": "test-base",
+      "hidden": true,
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error" }
+    },
+    {
+      "name": "debug",
+      "inherits": "test-base",
+      "configurePreset": "debug",
+      "environment": {
+        "ASAN_OPTIONS": "detect_stack_use_after_return=1:strict_init_order=1",
+        "UBSAN_OPTIONS": "print_stacktrace=1"
+      }
+    },
+    {
+      "name": "debug-clang",
+      "inherits": "debug",
+      "configurePreset": "debug-clang"
+    },
+    { "name": "debug-nosan", "inherits": "test-base", "configurePreset": "debug-nosan" },
+    { "name": "release",     "inherits": "test-base", "configurePreset": "release" }
+  ],
+  "workflowPresets": [
+    {
+      "name": "debug",
+      "steps": [
+        { "type": "configure", "name": "debug" },
+        { "type": "build",     "name": "debug" },
+        { "type": "test",      "name": "debug" }
+      ]
+    },
+    {
+      "name": "debug-clang",
+      "steps": [
+        { "type": "configure", "name": "debug-clang" },
+        { "type": "build",     "name": "debug-clang" },
+        { "type": "test",      "name": "debug-clang" }
+      ]
+    },
+    {
+      "name": "release",
+      "steps": [
+        { "type": "configure", "name": "release" },
+        { "type": "build",     "name": "release" },
+        { "type": "test",      "name": "release" }
+      ]
+    }
+  ]
+}
