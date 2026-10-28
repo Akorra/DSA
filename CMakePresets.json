@@ -1,6 +1,10 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "base",
@@ -54,23 +58,43 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_CXX_FLAGS": "-fno-omit-frame-pointer"
+        "CMAKE_CXX_FLAGS": "-fno-omit-frame-pointer",
+        "DSA_BUILD_TESTS": "OFF"
       }
     }
   ],
   "buildPresets": [
-    { "name": "debug",       "configurePreset": "debug" },
-    { "name": "debug-clang", "configurePreset": "debug-clang" },
-    { "name": "debug-nosan", "configurePreset": "debug-nosan" },
-    { "name": "release",     "configurePreset": "release" },
-    { "name": "bench",       "configurePreset": "bench" }
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "debug-clang",
+      "configurePreset": "debug-clang"
+    },
+    {
+      "name": "debug-nosan",
+      "configurePreset": "debug-nosan"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "bench",
+      "configurePreset": "bench"
+    }
   ],
   "testPresets": [
     {
       "name": "test-base",
       "hidden": true,
-      "output": { "outputOnFailure": true },
-      "execution": { "noTestsAction": "error" }
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
     },
     {
       "name": "debug",
@@ -86,32 +110,84 @@
       "inherits": "debug",
       "configurePreset": "debug-clang"
     },
-    { "name": "debug-nosan", "inherits": "test-base", "configurePreset": "debug-nosan" },
-    { "name": "release",     "inherits": "test-base", "configurePreset": "release" }
+    {
+      "name": "debug-nosan",
+      "inherits": "test-base",
+      "configurePreset": "debug-nosan"
+    },
+    {
+      "name": "release",
+      "inherits": "test-base",
+      "configurePreset": "release"
+    }
   ],
   "workflowPresets": [
     {
       "name": "debug",
       "steps": [
-        { "type": "configure", "name": "debug" },
-        { "type": "build",     "name": "debug" },
-        { "type": "test",      "name": "debug" }
+        {
+          "type": "configure",
+          "name": "debug"
+        },
+        {
+          "type": "build",
+          "name": "debug"
+        },
+        {
+          "type": "test",
+          "name": "debug"
+        }
       ]
     },
     {
       "name": "debug-clang",
       "steps": [
-        { "type": "configure", "name": "debug-clang" },
-        { "type": "build",     "name": "debug-clang" },
-        { "type": "test",      "name": "debug-clang" }
+        {
+          "type": "configure",
+          "name": "debug-clang"
+        },
+        {
+          "type": "build",
+          "name": "debug-clang"
+        },
+        {
+          "type": "test",
+          "name": "debug-clang"
+        }
+      ]
+    },
+    {
+      "name": "debug-nosan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "debug-nosan"
+        },
+        {
+          "type": "build",
+          "name": "debug-nosan"
+        },
+        {
+          "type": "test",
+          "name": "debug-nosan"
+        }
       ]
     },
     {
       "name": "release",
       "steps": [
-        { "type": "configure", "name": "release" },
-        { "type": "build",     "name": "release" },
-        { "type": "test",      "name": "release" }
+        {
+          "type": "configure",
+          "name": "release"
+        },
+        {
+          "type": "build",
+          "name": "release"
+        },
+        {
+          "type": "test",
+          "name": "release"
+        }
       ]
     }
   ]

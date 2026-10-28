@@ -33,4 +33,10 @@ if(PROJECT_IS_TOP_LEVEL)
     set(CMAKE_CXX_EXTENSIONS OFF)   # -std=c++20, not -std=gnu++20
     include(cmake/Warnings.cmake)
     include(cmake/Sanitizers.cmake)
+
+    option(DSA_BUILD_TESTS "Build dsa's tests" ON)
+    if(DSA_BUILD_TESTS)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
 endif()

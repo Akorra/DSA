@@ -85,7 +85,7 @@ ctest --preset debug
 cmake --workflow --preset debug   # the same three steps in one command
 ```
 
-`debug`, `debug-clang` and `release` have workflow presets. `ctest` fails if
+Every preset except `bench` has a workflow preset. `ctest` fails if
 no tests are registered, so a broken test setup can't pass silently.
 
 ### Build options
@@ -97,6 +97,7 @@ dsa is the top-level project.
 |--------------------------|---------|-----------------------------------------------------|
 | `DSA_SANITIZERS`         | empty   | `;`-separated list, e.g. `address;undefined`. Added to compile and link, with `-fno-sanitize-recover=all` and `-fno-omit-frame-pointer`. GCC/Clang only. |
 | `DSA_WARNINGS_AS_ERRORS` | `ON`    | `-Werror` (`/WX` on MSVC) on dsa's own targets.     |
+| `DSA_BUILD_TESTS`        | `ON`    | Build `tests/` (`OFF` in `bench`).                  |
 
 Warning flags are in `cmake/Warnings.cmake` (target `dsa_warnings`) and
 sanitizer flags in `cmake/Sanitizers.cmake` (target `dsa_sanitizers`). dsa's
@@ -123,6 +124,8 @@ IntelliSense is disabled in favour of clangd).
 Tests use Catch2 v3. Each module gets its own test executable
 (`tests/<area>/test_<module>.cpp`, registered with `dsa_add_test` in
 `tests/CMakeLists.txt`), and every `TEST_CASE` shows up individually in CTest.
+Behaviour that must abort (a failing `DSA_ASSERT`) uses `dsa_add_death_test`,
+which runs the binary through `cmake/DeathTest.cmake` and checks its output.
 
 Three kinds of checks run on every build:
 
