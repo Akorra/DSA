@@ -73,6 +73,7 @@ installed.
 | `debug-clang` | Same, with Clang. Run both compilers regularly.          |
 | `debug-nosan` | Plain debug, for valgrind or toolchains without ASan.    |
 | `release`     | Tests at `-O3 -DNDEBUG`; catches UB that only shows once the optimizer runs. |
+| `release-clang` | Same, with Clang.                                      |
 | `bench`       | Benchmarks only, RelWithDebInfo plus frame pointers so profilers have symbols and stacks. |
 
 Each preset builds into `build/<preset>/`.
@@ -106,6 +107,14 @@ own targets link both `PRIVATE`. GNU extensions are off (`-std=c++20`).
 
 [`cmake/README.md`](cmake/README.md) explains every flag, sanitizer and preset
 in detail: what each catches, runtime options, valgrind, pitfalls.
+
+### CI
+
+GitHub Actions (`.github/workflows/ci.yml`) runs `cmake --workflow` for
+`debug`, `debug-clang`, `release` and `release-clang` on Ubuntu 24.04 on every
+push and pull request, and checks that the `bench` preset still builds. Catch2
+and Google Benchmark aren't installed there, so CI also tests the
+fetch-from-GitHub path.
 
 ### VS Code
 

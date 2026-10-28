@@ -37,6 +37,7 @@ or cache options in someone else's build.
 | `debug-clang` | clang++  | Debug          | same as `debug`                                                         | yes |
 | `debug-nosan` | g++      | Debug          | `-g`                                                                    | yes |
 | `release`     | g++      | Release        | `-O3 -DNDEBUG`                                                          | yes |
+| `release-clang` | clang++ | Release       | `-O3 -DNDEBUG`                                                          | yes |
 | `bench`       | g++      | RelWithDebInfo | `-O2 -g -DNDEBUG -fno-omit-frame-pointer`                               | no  |
 
 All of them add `-std=c++20` (not `gnu++20`) and the warning set below.

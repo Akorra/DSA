@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Debugs whatever is selected as the launch target in the CMake Tools
+      // status bar (e.g. test_smoke). F5 builds it first.
+      "name": "Debug launch target (LLDB)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${command:cmake.launchTargetPath}",
+      // Catch2 test name or tag to run just one, e.g. ["harness: catch2 runs"] or ["[smoke]"].
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        // LeakSanitizer can't run under a debugger (ptrace), so leaks are off here.
+        // abort_on_error makes ASan raise SIGABRT, so the debugger stops at the bug.
+        "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1",
+        "UBSAN_OPTIONS": "print_stacktrace=1"
+      },
+      "preLaunchTask": "CMake: build"
+    }
+  ]
+}

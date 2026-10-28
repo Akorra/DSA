@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.preset }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false            # one red preset shouldn't hide the others
+      matrix:
+        preset: [debug, debug-clang, release, release-clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
+      # Newer runner kernels use more ASLR bits than older ASan runtimes expect,
+      # which makes ASan binaries crash at start-up. 28 bits is the old default.
+      - name: Reduce ASLR entropy for ASan
+        if: startsWith(matrix.preset, 'debug')
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
+      - name: Tool versions
+        run: cmake --version && ninja --version && g++ --version && clang++ --version
+
+      # configure + build + test. Catch2 isn't installed here, so it's fetched:
+      # CI exercises the FetchContent path, the local machine the find_package path.
+      - name: Configure, build, test
+        run: cmake --workflow --preset ${{ matrix.preset }}
+
+  bench-builds:
+    name: bench (build only)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Ninja
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+      # Timings on shared CI machines are meaningless; this only proves the
+      # benchmarks still compile.
+      - name: Configure and build
+        run: cmake --preset bench && cmake --build --preset bench

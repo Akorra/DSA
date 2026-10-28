@@ -52,6 +52,14 @@
       }
     },
     {
+      "name": "release-clang",
+      "displayName": "Release (Clang, optimised tests)",
+      "inherits": "release",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
       "name": "bench",
       "displayName": "Bench (GCC, RelWithDebInfo)",
       "inherits": "base",
@@ -80,6 +88,10 @@
     {
       "name": "release",
       "configurePreset": "release"
+    },
+    {
+      "name": "release-clang",
+      "configurePreset": "release-clang"
     },
     {
       "name": "bench",
@@ -120,6 +132,11 @@
       "name": "release",
       "inherits": "test-base",
       "configurePreset": "release"
+    },
+    {
+      "name": "release-clang",
+      "inherits": "test-base",
+      "configurePreset": "release-clang"
     }
   ],
   "workflowPresets": [
@@ -188,6 +205,23 @@
         {
           "type": "test",
           "name": "release"
+        }
+      ]
+    },
+    {
+      "name": "release-clang",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "release-clang"
+        },
+        {
+          "type": "build",
+          "name": "release-clang"
+        },
+        {
+          "type": "test",
+          "name": "release-clang"
         }
       ]
     }

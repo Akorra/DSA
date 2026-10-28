@@ -1,0 +1,21 @@
+{
+  // CMake Tools: drive everything from CMakePresets.json.
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": true,
+
+  // clangd does code intelligence; cpptools is installed only for its
+  // GDB debugger, so its IntelliSense is off to avoid two engines fighting.
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "clangd.arguments": [
+    // Change to build/debug-clang (or another preset) if you mostly use that.
+    "--compile-commands-dir=${workspaceFolder}/build/debug",
+    // Let clangd ask g++/clang++ for their system include paths.
+    "--query-driver=/usr/bin/g++,/usr/bin/clang++",
+    "--background-index",
+    "--header-insertion=never"
+  ],
+
+  "files.associations": {
+    "*.hpp": "cpp"
+  }
+}
