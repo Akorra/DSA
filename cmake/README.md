@@ -46,7 +46,7 @@ Output goes to `build/<preset>/`, with `compile_commands.json` for clangd.
 cmake --preset debug                 # configure
 cmake --build --preset debug         # build
 ctest --preset debug                 # test
-cmake --workflow --preset debug      # all three (debug, debug-clang, release)
+cmake --workflow --preset debug      # all three (every preset except bench)
 ```
 
 Why each one exists:
@@ -63,6 +63,8 @@ Why each one exists:
 - **bench.** Optimized like a real build, but with debug info (`-g`) and frame
   pointers so `perf` can show symbols and full call stacks. `NDEBUG` is set,
   so asserts don't distort timings.
+
+`bench` sets `DSA_BUILD_TESTS=OFF`: it builds benchmarks only.
 
 The test presets set `noTestsAction: error`: if no tests are registered,
 `ctest` fails instead of reporting success.
@@ -200,13 +202,32 @@ pointed into, such as an iterator kept across a reallocation.
 ### Valgrind (`debug-nosan`)
 
 ```sh
-cmake --preset debug-nosan && cmake --build --preset debug-nosan
+cmake --workflow --preset debug-nosan
 valgrind --leak-check=full --track-origins=yes --error-exitcode=1 \
     ./build/debug-nosan/tests/<test_binary>
 ```
 
 `--track-origins=yes` shows where an uninitialised value came from.
 `--error-exitcode=1` makes it fail like a test would.
+
+## Header self-containment (`cmake/SelfContained.cmake`)
+
+For every `include/dsa/**/*.hpp` the build generates
+`build/<preset>/tests/selfcontained/<header>.cpp` containing only
+
+```cpp
+#include <dsa/the/header.hpp>
+#include <dsa/the/header.hpp>
+```
+
+and compiles it (target `dsa_selfcontained`, part of the normal build, with
+our warnings and sanitizers). It fails if the header uses something it didn't
+include itself, or if `#pragma once` is missing. In a test file a header can
+silently "borrow" an include from another header included before it; alone
+in a file it can't.
+
+The header list uses `GLOB_RECURSE ... CONFIGURE_DEPENDS`, so a new header is
+picked up on the next build without re-running CMake by hand.
 
 ## Seeing what flags a target actually gets
 
