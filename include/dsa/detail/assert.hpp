@@ -31,6 +31,7 @@ namespace dsa::detail{
 
 // macro inside do{}while(0) so it behaves as a single statement.
 // cond between () to maintain operation order 
+// conditions with a comma, outside parentheses has to be wrapped in an extra pair, example: '(std::pair<int,int>)'
 #if DSA_ENABLE_ASSERTS
 #   define DSA_ASSERT(cond, msg) \
         do { \
