@@ -26,3 +26,11 @@ target_include_directories(dsa INTERFACE
     $<INSTALL_INTERFACE:include>)
 
 target_compile_features(dsa INTERFACE cxx_std_20)
+
+# Developer-only setup: skipped when dsa is pulled in via add_subdirectory /
+# FetchContent, so consumers get no extra options, targets or flags.
+if(PROJECT_IS_TOP_LEVEL)
+    set(CMAKE_CXX_EXTENSIONS OFF)   # -std=c++20, not -std=gnu++20
+    include(cmake/Warnings.cmake)
+    include(cmake/Sanitizers.cmake)
+endif()
