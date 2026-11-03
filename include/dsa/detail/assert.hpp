@@ -40,5 +40,8 @@ namespace dsa::detail{
             } \
         } while (0)
 #else
-#   define DSA_ASSERT(cond, msg) ((void)sizeof(cond), (void)sizeof(msg)) // compile cond silently, but discard code generation or runtime evaluation
+// Unevaluated: no code, no side effects. !(cond) forces the same bool
+// conversion as the debug branch, so both modes accept the same conditions;
+// it also yields a plain bool, so bit-field conditions are fine in sizeof.
+#   define DSA_ASSERT(cond, msg) ((void)sizeof(!(cond)), (void)sizeof(msg)) // compile cond silently, !cond, to cover bitfields, but discard code generation or runtime evaluation
 #endif
