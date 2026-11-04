@@ -226,9 +226,9 @@ structures std doesn't provide.
 
 | Work item | Header | Implemented |
 |-----------|--------|-------------|
-| Build system, presets, CI, VS Code setup | `CMakeLists.txt`, `CMakePresets.json`, `cmake/` | 🚧 |
-| Test harness: Catch2, `tracked` element type, header self-containment check | `tests/support/tracked.hpp` | ⬜ |
-| Benchmark harness and std baseline | `benchmarks/` | ⬜ |
+| Build system, presets, CI, VS Code setup | `CMakeLists.txt`, `CMakePresets.json`, `cmake/` | ✅ |
+| Test harness: Catch2, `tracked` element type, header self-containment check | `tests/support/tracked.hpp` | 🚧 |
+| Benchmark harness and std baseline | `benchmarks/` | ✅ |
 | Config and assertion macros | `dsa/config.hpp`, `dsa/detail/assert.hpp` | ✅ |
 | Differential-testing helper (random ops vs. std) | `tests/support/differential.hpp` | ⬜ |
 | Uninitialized-memory algorithms (`uninitialized_copy`, `_move`, `destroy`, ...) with exception safety **(std)** | `dsa/memory/uninitialized.hpp` | ⬜ |

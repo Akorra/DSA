@@ -16,13 +16,18 @@ FetchContent_MakeAvailable(Catch2)
 
 include(Catch)   # catch_discover_tests()
 
+# Test-only helpers (tracked.hpp, ...). Included as "support/<name>.hpp" so
+# they can never be confused with library headers under <dsa/...>.
+add_library(dsa_test_support INTERFACE)
+target_include_directories(dsa_test_support INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
 # dsa_add_test(<name> <source>...)
 #   One executable per module. Gets our warnings and the preset's sanitizers,
 #   and every TEST_CASE is registered with CTest as its own test.
 function(dsa_add_test name)
     add_executable(${name} ${ARGN})
     target_link_libraries(${name} PRIVATE
-        dsa::dsa dsa_warnings dsa_sanitizers Catch2::Catch2WithMain)
+        dsa::dsa dsa_test_support dsa_warnings dsa_sanitizers Catch2::Catch2WithMain)
     # PRE_TEST: list the test cases when ctest runs, not at build time, so a
     # binary that crashes or leaks under ASan fails a test instead of the build.
     catch_discover_tests(${name} DISCOVERY_MODE PRE_TEST)
@@ -48,3 +53,4 @@ include(${PROJECT_SOURCE_DIR}/cmake/SelfContained.cmake)
 dsa_add_test(test_smoke smoke/test_smoke.cpp)
 
 add_subdirectory(detail)
+add_subdirectory(support)
