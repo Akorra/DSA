@@ -54,3 +54,4 @@ dsa_add_test(test_smoke smoke/test_smoke.cpp)
 
 add_subdirectory(detail)
 add_subdirectory(support)
+add_subdirectory(algorithm)
