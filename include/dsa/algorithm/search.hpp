@@ -49,7 +49,7 @@ template < std::forward_iterator ForwardIt, class T,
 }
 
 template < std::forward_iterator ForwardIt, class T, 
-    std::predicate<std::iter_reference_t<ForwardIt>, const T&> Compare = std::less<> >
+    std::predicate<const T&, std::iter_reference_t<ForwardIt>> Compare = std::less<> >
 [[nodiscard]] constexpr ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T& value, Compare comp = {}) 
 {
     using difference_type = typename std::iterator_traits<ForwardIt>::difference_type;
@@ -63,10 +63,10 @@ template < std::forward_iterator ForwardIt, class T,
         difference_type mid = len / 2; // Calculate the midpoint of the current range
         std::advance(it, mid);         // Move 'it' to the midpoint position
         
-        // Compare the value at 'it' with the target 'value' using the provided comparator ( *it >= target value ) = !( *it < target value )
-        // If 'comp(*it, value)' is false, it means the target value is in the upper half of the range
-        // If 'comp(*it, value)' is true,  it means the target value is in the lower half of the range
-        if (!(comp(*it,value)))
+        // Compare the value at 'it' with the target 'value' using the provided comparator ( *it <= target value ) = !( *it > target value )
+        // If 'comp(value, *it)' is false, it means the target value is in the upper half of the range
+        // If 'comp(value, *it)' is true,  it means the target value is in the lower half of the range
+        if (!(comp(value,*it)))
         {
             first = ++it;   // Move 'first' to the position after 'it' since the target value is in the upper half
             len -= mid + 1; // Update the length of the range to reflect the new search space
